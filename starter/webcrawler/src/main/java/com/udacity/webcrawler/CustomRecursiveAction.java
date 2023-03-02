@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.List;
 import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 public final class CustomRecursiveAction extends RecursiveAction {
@@ -21,6 +22,7 @@ public final class CustomRecursiveAction extends RecursiveAction {
     private final Clock clock;
     private final List<Pattern> ignoredUrls;
     private final PageParserFactory parserFactory;
+    private ReentrantLock lock = new ReentrantLock();
 
 
     public CustomRecursiveAction(
@@ -55,10 +57,14 @@ public final class CustomRecursiveAction extends RecursiveAction {
             }
         }
 
+        // contains and add are not atomic and thus this will
+        // make this list thread-safe.
+        lock.lock();
         if (visitedUrls.contains(url)){
             return;
         }
         visitedUrls.add(url);
+        lock.unlock();
 
         PageParser.Result result = parserFactory.get(url).parse();
         popularWordCount(result, counts);

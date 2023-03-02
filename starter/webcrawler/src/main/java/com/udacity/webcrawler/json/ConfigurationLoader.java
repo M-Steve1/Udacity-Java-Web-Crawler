@@ -3,11 +3,9 @@ package com.udacity.webcrawler.json;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -34,7 +32,6 @@ public final class ConfigurationLoader {
     // TODO: Fill in this method (DONE).
     try(Reader reader = new FileReader(path.toString())) {
       CrawlerConfiguration configuration = read(reader);
-      reader.close();
       return configuration;
     } catch (IOException ex) {
       throw new RuntimeException(ex);
